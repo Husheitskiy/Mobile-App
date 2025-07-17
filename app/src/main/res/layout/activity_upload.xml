@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Malware Scanner"
+        android:textColor="#FF3D00"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed" />
+
+    <!-- Upload Button -->
+    <Button
+        android:id="@+id/uploadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload APK"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#5A7839"
+        android:layout_marginTop="24dp"
+        android:elevation="4dp"
+        android:padding="14dp" />
+
+    <!-- Uploaded File Name + Tick -->
+    <LinearLayout
+        android:id="@+id/fileInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/fileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="filename.apk" />
+
+        <ImageView
+            android:id="@+id/tickIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/tick"
+            android:contentDescription="Uploaded"
+            android:layout_marginStart="8dp"
+             />
+    </LinearLayout>
+
+    <!-- Scan Button -->
+    <Button
+        android:id="@+id/scanbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan Now"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#D50000"
+        android:layout_marginTop="20dp"
+        android:elevation="6dp"
+        android:padding="14dp" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:indeterminate="true" />
+
+    <!-- Output Scrollable Area -->
+    <ScrollView
+        android:id="@+id/scrollArea2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:background="#1E1E1E"
+        android:padding="12dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/outputText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan results will appear here."
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:lineSpacingExtra="6dp"
+            android:typeface="monospace" />
+    </ScrollView>
+
+    <!-- Home Button -->
+    <ImageView
+        android:id="@+id/home2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/homebutton"
+        android:contentDescription="Home"
+        android:layout_marginLeft="140dp"
+        />
+
+</LinearLayout>

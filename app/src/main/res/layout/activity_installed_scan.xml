@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#000000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Malware count -->
+    <TextView
+        android:id="@+id/quantity"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
+        android:text="0"
+        android:textColor="#FF0000"
+        android:textSize="30sp"
+        android:layout_gravity="center" />
+    <TextView
+        android:layout_height="40dp"
+        android:layout_width="200dp"
+        android:text="Malware Detected"
+        android:textColor="#FDFCFC"
+        android:textSize="24sp"
+        android:layout_gravity="center" />
+
+    <!-- Scan Button -->
+    <Button
+        android:id="@+id/scanButton"
+        android:text="Scan Installed Apps"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#D32F2F"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/scanList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Home Button -->
+    <ImageView
+        android:id="@+id/home"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/homebutton"
+        android:contentDescription="Home"
+        android:layout_gravity="end" />
+</LinearLayout>

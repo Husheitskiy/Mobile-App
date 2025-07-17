@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "960400662710",
+    "project_id": "maldet-1ae7e",
+    "storage_bucket": "maldet-1ae7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960400662710:android:c98b18a0965e6006928617",
+        "android_client_info": {
+          "package_name": "com.apps.maldet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPOeqJBpXbA3Uo4C5kWbdxKctc51iXq40"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

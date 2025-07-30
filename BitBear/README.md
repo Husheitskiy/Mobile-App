@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # bitbear
 
 A new Flutter project.
@@ -14,3 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Mobile-App
+This is all mobile application I created using Flutter, : )
+>>>>>>> 3c52db196c1003e73aba24d88301998597069d56

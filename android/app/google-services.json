@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "34618412152",
+    "project_id": "bitbear-30646",
+    "storage_bucket": "bitbear-30646.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34618412152:android:63f5a0da220e56ce2ff18d",
+        "android_client_info": {
+          "package_name": "com.example.bitbear"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRlVsKmuBPG9-k3wHZN-iN6Zb_nFFesWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

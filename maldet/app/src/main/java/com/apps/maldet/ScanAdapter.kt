@@ -1,6 +1,5 @@
 package com.apps.maldet
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ScanAdapter(private val scanResults: List<installedScan.ScanResult>) :
-    RecyclerView.Adapter<ScanAdapter.ViewHolder>() {
+class ScanAdapter(
+    private val scanResults: List<installedScan.ScanResult>,
+    private val onItemClick: (installedScan.ScanResult) -> Unit
+) : RecyclerView.Adapter<ScanAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val appIcon: ImageView = view.findViewById(R.id.icon)
@@ -32,10 +33,14 @@ class ScanAdapter(private val scanResults: List<installedScan.ScanResult>) :
         holder.appIcon.setImageDrawable(result.icon)
         holder.appName.text = result.appName
         holder.packageName.text = result.packageName
-        holder.score.text = "Score: %.2f".format(result.score)
+        holder.score.text = "Score: %.2f%%".format(result.score)
         holder.label.text = result.label
         holder.label.setTextColor(
             if (result.label == "MALWARE") 0xFFFF4444.toInt() else 0xFF66BB6A.toInt()
         )
+
+        holder.itemView.setOnClickListener {
+            onItemClick(result) // 🔥 Trigger the dialog from here
+        }
     }
 }

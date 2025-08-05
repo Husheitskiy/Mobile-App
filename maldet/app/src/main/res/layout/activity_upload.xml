@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Malware Scanner"
+        android:textColor="#FF3D00"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="sans-serif-condensed" />
+
+    <!-- Upload Button -->
+    <Button
+        android:id="@+id/uploadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload APK"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#5A7839"
+        android:layout_marginTop="24dp"
+        android:elevation="4dp"
+        android:padding="14dp" />
+
+    <!-- Uploaded File Name + Tick -->
+    <LinearLayout
+        android:id="@+id/fileInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/fileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="filename.apk" />
+
+        <ImageView
+            android:id="@+id/tickIcon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/tick"
+            android:contentDescription="Uploaded"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Scan Button -->
+    <Button
+        android:id="@+id/scanbutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan Now"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#D50000"
+        android:layout_marginTop="20dp"
+        android:elevation="6dp"
+        android:padding="14dp" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:indeterminate="true" />
+
+    <!-- Output Scrollable Area -->
+    <ScrollView
+        android:id="@+id/scrollArea2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="20dp"
+        android:background="#1E1E1E"
+        android:padding="12dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Big Warning Icon -->
+            <ImageView
+                android:id="@+id/ResultIcon"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/sad" />
+
+            <!-- ⚠ Warning Text -->
+            <TextView
+                android:id="@+id/outputText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚠ MALWARE DETECTED"
+                android:textColor="#FF5555"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="10dp" />
+
+            <ImageView
+                android:id="@+id/appIcon"
+                android:src="@drawable/filess"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/appName"
+                android:text="App Name"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_marginBottom="7dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Features go here -->
+            <TextView
+                android:id="@+id/matchedFeatures"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dangerous Feature in this App: "
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:ignore="TextSizeCheck" />
+
+            <LinearLayout
+                android:id="@+id/features"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/seeMore"
+                android:text="See more..."
+                android:textColor="#1E90FF"
+                android:textSize="10sp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- VirusTotal Box -->
+            <LinearLayout
+                android:id="@+id/virusTotalContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="#8C0E0E"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virus Total Result:"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/virusTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="VirusTotal: 15 engines flagged this"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

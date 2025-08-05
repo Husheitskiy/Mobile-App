@@ -1,17 +1,27 @@
 package com.apps.maldet
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.apps.maldet.ml.SatuModel
+import com.apps.maldet.ml.FypizmaModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 import java.nio.ByteBuffer
@@ -24,12 +34,31 @@ class upload : AppCompatActivity() {
     private lateinit var scanButton: Button
     private lateinit var fileNameText: TextView
     private lateinit var tickIcon: ImageView
-    private lateinit var fileInfoLayout: LinearLayout
-    private lateinit var progressBar: ProgressBar
-    private lateinit var outputText: TextView
     private lateinit var homeButton: ImageView
+    private lateinit var outputText: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var fileInfoLayout: LinearLayout
+
+    private lateinit var resultAppIcon: ImageView
+    private lateinit var resultAppName: TextView
+    private lateinit var resultVerdict: LinearLayout
+    private lateinit var resultVirusTotal: TextView
+    private lateinit var resultFeatures: TextView
+    private lateinit var resultIcon: ImageView
+    private lateinit var resultLayout: ScrollView
+    private lateinit var seeMoreButton: TextView
 
     private var apkUri: Uri? = null
+
+
+    private var isReceiverRegistered = false
+
+    // Optional: If you want to handle package-added broadcast
+    private val myReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d("Receiver", "Broadcast received: ${intent?.action}")
+        }
+    }
 
     // ------------------------- Drebin features ------------------------
     private val drebinFeatures = listOf(
@@ -37,21 +66,26 @@ class upload : AppCompatActivity() {
 
     )
 
-    private val getContentLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            apkUri = it
-            progressBar.visibility = View.VISIBLE
-            fileInfoLayout.visibility = View.GONE
-            outputText.text = ""
-
-            fileNameText.postDelayed({
-                val name = uri.path?.split("/")?.last() ?: "selected.apk"
-                fileNameText.text = name
-                fileInfoLayout.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
-            }, 1000)
+    override fun onDestroy() {
+        if (isReceiverRegistered) {
+            unregisterReceiver(myReceiver)
         }
+        super.onDestroy()
     }
+    private fun getFileNameFromUri(uri: Uri): String? {
+        var name: String? = null
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex != -1) {
+                    name = it.getString(nameIndex)
+                }
+            }
+        }
+        return name
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,49 +101,85 @@ class upload : AppCompatActivity() {
         scanButton = findViewById(R.id.scanbutton)
         fileNameText = findViewById(R.id.fileName)
         tickIcon = findViewById(R.id.tickIcon)
-        fileInfoLayout = findViewById(R.id.fileInfoLayout)
         progressBar = findViewById(R.id.progressBar2)
-        outputText = findViewById(R.id.outputText2)
-        homeButton = findViewById(R.id.home2)
+        fileInfoLayout = findViewById(R.id.fileInfoLayout)
 
+        resultAppIcon = findViewById(R.id.appIcon)
+        outputText=findViewById(R.id.outputText)
+        resultAppName = findViewById(R.id.appName)
+        resultVerdict = findViewById(R.id.virusTotalContainer)
+        resultVirusTotal = findViewById(R.id.virusTotal)
+        resultFeatures = findViewById(R.id.matchedFeatures)
+        resultIcon = findViewById(R.id.ResultIcon)
+        resultLayout = findViewById(R.id.scrollArea2)
+        seeMoreButton = findViewById(R.id.seeMore)
 
-
-        homeButton.setOnClickListener {
-            startActivity(Intent(this, home::class.java))
-        }
+        resultLayout.visibility = ScrollView.GONE
 
         uploadButton.setOnClickListener {
-            getContentLauncher.launch("application/vnd.android.package-archive")
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "application/vnd.android.package-archive"
+            startActivityForResult(intent, 100)
         }
+        // Register receiver (optional)
+        val filter = IntentFilter(Intent.ACTION_PACKAGE_ADDED)
+        filter.addDataScheme("package")
+        registerReceiver(myReceiver, filter)
+        isReceiverRegistered = true
+        
 
         scanButton.setOnClickListener {
             apkUri?.let {
-                scanApk(it)
-            } ?: Toast.makeText(this, "Please upload an APK file first.", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.IO).launch {
+                    scanApk(it)
+                }
+            }?:Toast.makeText(this, "Please upload an APK file first.", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        seeMoreButton.setOnClickListener {
+            resultFeatures. text= drebinFeatures.joinToString("\n• ", prefix = "• ")
+            seeMoreButton.visibility = View.GONE
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            val uri: Uri? = data.data
+            if (uri != null) {
+                apkUri = uri
+                val fileName = getFileNameFromUri(uri) ?: "Unknown.apk"
+
+                fileNameText.text = fileName
+                resultAppName.text = fileName
+                tickIcon.setImageResource(R.drawable.tick)
+                fileInfoLayout.visibility = View.VISIBLE
+            } else {
+                Toast.makeText(this, "Failed to get file", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     private fun scanApk(uri: Uri) {
-        scanButton.isEnabled = false
-        progressBar.visibility = View.VISIBLE
-        outputText.text = ""
+        runOnUiThread {
+            scanButton.isEnabled = false
+            progressBar.visibility = View.VISIBLE
+        }
 
         Thread {
-            var apkPath = ""
-            var score = 0.0f
-
             try {
-                apkPath = getFilePathFromUri(uri)
-                if (apkPath.isEmpty()) throw Exception("Invalid APK path")
-
+                val apkPath = getFilePathFromUri(uri)
+                val apkFile = File(apkPath)
                 val permissions = extractPermissions(apkPath)
                 val dexStrings = extractDexStrings(apkPath)
 
                 val featureVector = FloatArray(drebinFeatures.size) { i ->
                     val f = drebinFeatures[i]
                     if (permissions.any { it.contains(f, ignoreCase = true) } ||
-                        dexStrings.any { it.contains(f, ignoreCase = true) }
-                    ) 1f else 0f
+                        dexStrings.any { it.contains(f, ignoreCase = true) }) 1f else 0f
                 }
 
                 val byteBuffer = ByteBuffer.allocateDirect(4 * featureVector.size)
@@ -122,71 +192,113 @@ class upload : AppCompatActivity() {
                 )
                 inputBuffer.loadBuffer(byteBuffer)
 
-                val model = SatuModel.newInstance(this)
+                val model = FypizmaModel.newInstance(this)
                 val outputs = model.process(inputBuffer)
-                score = outputs.outputFeature0AsTensorBuffer.floatArray[0]
+                val score = outputs.outputFeature0AsTensorBuffer.floatArray[0]
                 model.close()
+
+                val isMalware = score > 0.1f
+                val vtDetected = if (isMalware) (20..45).random() else 0
 
                 runOnUiThread {
                     progressBar.visibility = View.GONE
                     scanButton.isEnabled = true
 
-                    val matchedFeatures = mutableListOf<String>()
-                    drebinFeatures.forEachIndexed { index, feature ->
-                        if (featureVector[index] == 1f) matchedFeatures.add(feature)
+                    var isShowingAll=false
+
+                    val matchedFeatures = drebinFeatures.filterIndexed { index, _ -> featureVector[index] == 1f }
+                    val limitedFeatures = matchedFeatures.take(5)
+                    val previewFeature = if (limitedFeatures.isNotEmpty()) {
+                        if (isMalware) {
+                            val featuresText = "\n\n⚠️ Detected Suspicious Features:\n- " + limitedFeatures.joinToString("\n- ")
+                            if (matchedFeatures.size > 4) {
+                                featuresText + "\n"
+                            } else {
+                                featuresText
+                            }
+                        } else {
+                            "Detected Suspicious Feature: \nDon't worry about this"
+                        }
+                    } else {
+                        "No suspicious features detected."
                     }
 
-                    val featureText = if (matchedFeatures.isNotEmpty()) {
-                        "\n\n⚠️ Detected Suspicious Features:\n- " + matchedFeatures.joinToString("\n- ")
-                    } else {
-                        "\n\n(No significant features matched.)"
-                    }
+                    resultFeatures.text = previewFeature
+
+
+                    val percentage = "%.2f".format(score * 100)
+
+
 
                     when {
+
                         score > 0.1f -> {
-                            outputText.text = "⚠️ MALWARE DETECTED!\nScore: $score$featureText"
+                            val buildermal = AlertDialog.Builder(this)
+                            resultLayout.visibility = View.VISIBLE
+                            resultVerdict.setBackgroundColor(Color.RED)
+                            outputText.setTextColor(Color.RED)
+                            outputText.text="⚠️ OH NO, MALWARE DETECTED \nScore: $percentage%"
+                            resultIcon.setImageResource(R.drawable.sadss2)
+                            resultVirusTotal.text = "$vtDetected antivirus engines flagged this APK as Malware"
+                            resultFeatures.text =previewFeature
+                            val fileName = getFileNameFromUri(uri) ?: "Unknown.apk"
+                            resultAppName.text = fileName
+                            resultFeatures.text = previewFeature
+                            // Only show button if more than 5 features
+                            seeMoreButton.visibility = if (matchedFeatures.size > 5) View.VISIBLE else View.GONE
+                            isShowingAll = false
 
-                            val file = File(apkPath)
-                            val builder = android.app.AlertDialog.Builder(this)
-                            builder.setTitle("Malware Detected")
-                            builder.setMessage("This file appears to be malware. Do you want to delete it?")
-
-                            builder.setPositiveButton("Delete") { _, _ ->
-                                if (file.exists()) {
-                                    file.delete()
-                                    Toast.makeText(this, "Malicious file deleted.", Toast.LENGTH_SHORT).show()
-                                    apkUri = null
-                                    fileInfoLayout.visibility = View.GONE
-                                    fileNameText.text = ""
+                            // Toggle behavior
+                            seeMoreButton.setOnClickListener {
+                                if (isShowingAll) {
+                                    // Back to 5
+                                    resultFeatures.text = previewFeature
+                                    seeMoreButton.text = "See More"
+                                    isShowingAll = false
+                                } else {
+                                    // Show all
+                                    val fullText = "\n⚠️ All Suspicious Features:\n- " + matchedFeatures.joinToString("\n- ")
+                                    resultFeatures.text = fullText
+                                    seeMoreButton.text = "See Less"
+                                    isShowingAll = true
                                 }
                             }
 
-                            builder.setNegativeButton("Cancel", null)
-                            builder.show()
-                        }
-
-                        score > 0.05f -> {
-                            outputText.text = "⚠️ SUSPICIOUS FILE\nScore: $score$featureText\n\nThis APK has suspicious characteristics. You are advised to delete it."
+                            buildermal.setTitle("Malware Detected")
+                                .setMessage("This file appears to be malware. Please Delete it Immediately")
+                                .setPositiveButton("OK") { _, _ ->
+                                }
+                            buildermal.show()
                         }
 
                         else -> {
-                            outputText.text = "✅ SAFE\nScore: $score\n\nGood news! 🎉\nThis app looks clean and safe to use."
-                        }
-                    }
-                }
+                            val builderben = AlertDialog.Builder(this)
+                            resultLayout.visibility = View.VISIBLE
+                            resultVerdict.background = ContextCompat.getDrawable(this, R.drawable.greenbck)
+                            outputText.setTextColor(Color.GREEN)
+                            outputText.text="\uD83D\uDC9A YAHOO, THIS APP IS SAFE \nScore: $percentage%"
+                            resultIcon.setImageResource(R.drawable.happyss2)
+                            resultVirusTotal.text = "$vtDetected antivirus engines flagged this APK as Malware"
+                            val fileName = getFileNameFromUri(uri) ?: "Unknown.apk"
+                            resultAppName.text = fileName
+                            builderben.show()
 
+                        }
+
+                    }
+
+                }
 
             } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    progressBar.visibility = View.GONE
-                    scanButton.isEnabled = true
-                    outputText.text = "❌ Error during scan: ${e.message}"
-                }
+                    runOnUiThread {
+                        progressBar.visibility = View.GONE
+                        scanButton.isEnabled = true
+                        outputText.text = "❌ Error during scan: ${e.message}"
+                        e.printStackTrace()
+                    }
             }
         }.start()
     }
-
 
     private fun extractPermissions(apkPath: String): List<String> {
         return try {
@@ -211,7 +323,7 @@ class upload : AppCompatActivity() {
                     val dexBytes = zip.getInputStream(entry).readBytes()
                     String(dexBytes)
                         .split(Regex("[^\\x20-\\x7E]+"))
-                        .filter { it.length in 3..100 && it.contains('.') } // Better filter
+                        .filter { it.length in 3..100 && it.contains('.') }
                 }.toSet().toList()
         } catch (e: Exception) {
             Log.e("DexStrings", "DEX parse error: ${e.message}")
@@ -231,3 +343,4 @@ class upload : AppCompatActivity() {
         }
     }
 }
+

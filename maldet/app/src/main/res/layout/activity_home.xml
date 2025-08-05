@@ -16,10 +16,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Welcome to MalDet"
-            android:textSize="36sp"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="10dp"
+            android:textAlignment="center" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/icon"
+            android:layout_marginBottom="30dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="What you're gonna do today?"
+            style="@style/TextAppearance.Material3.BodyLarge"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="15dp"
             android:textAlignment="center" />
 
         <!-- First Card - Scan Phone -->
@@ -28,15 +45,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/card_background"
-            android:padding="16dp"
+            android:padding="30dp"
             android:elevation="10dp"
-            android:layout_marginBottom="24dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="40dp"
+            android:gravity="center" >
 
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/fon"
+                android:src="@drawable/phone"
                 android:contentDescription="Phone Icon" />
 
             <LinearLayout
@@ -81,14 +98,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@drawable/card_background"
-            android:padding="16dp"
+            android:padding="30dp"
             android:elevation="10dp"
-            android:gravity="center_vertical">
+            android:gravity="center">
 
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/file"
+                android:src="@drawable/filess"
                 android:contentDescription="File Icon" />
 
             <LinearLayout

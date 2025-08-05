@@ -6,6 +6,7 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -19,20 +20,26 @@
         android:theme="@style/Theme.MalDet"
         tools:targetApi="31">
         <activity
+            android:name=".RecycleView"
+            android:exported="false" />
+        <activity
+            android:name=".VirusTotalHelper"
+            android:exported="false" />
+        <activity
             android:name=".installedScan"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".Register"
             android:exported="false" />
         <activity
             android:name=".home"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".history"
             android:exported="false" />
         <activity
             android:name=".login"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,7 +48,7 @@
         </activity>
         <activity
             android:name=".upload"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
